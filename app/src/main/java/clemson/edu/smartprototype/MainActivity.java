@@ -6,9 +6,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import org.hl7.fhir.dstu3.model.Patient;
-import org.hl7.fhir.dstu3.model.Practitioner;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,31 +27,38 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.api.BundleEntry;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.client.IRestfulClientFactory;
 import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
+import ca.uhn.fhir.rest.gclient.TokenClientParam;
+import clemson.edu.smartprototype.patient.OnSearchForPatientsComplete;
+import clemson.edu.smartprototype.patient.SearchForPatients;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnSearchForPatientsComplete {
 
-    private static String BASE_URL = "https://auth.hspconsortium.org";
-    private static String TOKEN_URL = BASE_URL+"/token";
-    private static String AUTHORIZE_URL = BASE_URL+"/authorize";
-    private static String DATA_URL = BASE_URL+"/hspc/data";
-
-    private static String STATE = "3F9463CA";
-    private static String SCOPE = "openid user/*.* profile";
-    private static String CLIENT_ID = "980b1773-e620-41c2-b413-82ac9d46cc4b";
-    private static String REDIRECT_URI = "http://smartapp/callback";
-    private static String RESPONSE_TYPE = "code";
-    private static String GRANT_TYPE = "authorization_code";
-
-
+    private ListView mListView;
+    
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mListView = (ListView) findViewById(R.id.mListView);
+
+        SearchForPatients patientAsyncTask = new SearchForPatients(this);
+        patientAsyncTask.execute();
     }
 
+    public void onSearchForPatientsComplete(List<Patient> patients) {
+
+        String[] patientStringArray = new String[patients.size()];
+        for(int i=0; i<patients.size(); i++) patientStringArray[i] = "Patient "+i+": "+ ((patients.get(i).getName().size()>0) ? patients.get(i).getName().get(0).getFamily()+", "+patients.get(i).getName().get(0).getGivenAsSingleString() : "Name not found");
+
+        ArrayAdapter<String> patientAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, patientStringArray);
+        mListView.setAdapter(patientAdapter);
+    }
+
+
+    /*
     protected void onResume() {
         super.onResume();
 
@@ -136,17 +144,24 @@ public class MainActivity extends AppCompatActivity {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         startActivity(browserIntent);
     }
+
     IGenericClient genericClient;
     public void test(String token){
         System.out.println("AT TEST: "+token);
-        FhirContext ctx = null;
-        ctx = FhirContext.forDstu3();
+        FhirContext ctx = FhirContext.forDstu3();
         System.out.println("AT TEST: "+token);
         IRestfulClientFactory clientFactory = ctx.getRestfulClientFactory();
 
         BearerTokenAuthInterceptor authInterceptor = new BearerTokenAuthInterceptor(token);
         genericClient = ctx.newRestfulGenericClient(DATA_URL);
         genericClient.registerInterceptor(authInterceptor);
+
+        ca.uhn.fhir.model.api.Bundle bundle = genericClient.search().forResource(Patient.class)
+                .where(new TokenClientParam("gender").exactly().code("male"))
+                .prettyPrint()
+                .execute();
+
+
 
 
         Thread searchThread = new Thread() {
@@ -170,13 +185,16 @@ public class MainActivity extends AppCompatActivity {
                                 System.out.println(practitioner.getGender()+" "+practitioner.getName());
 
                             }
-                        }*/
+                        }
                     }
                 });
             }
         };
         searchThread.start();
     }
+
+
+
 
     private class DownloadFilesTask extends AsyncTask<String, Integer, String> {
         protected String doInBackground(String... codes) {
@@ -185,4 +203,6 @@ public class MainActivity extends AppCompatActivity {
             return token;
         }
     }
+
+    */
 }
