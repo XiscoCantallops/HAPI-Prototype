@@ -9,5 +9,5 @@ import java.util.List;
  */
 
 public interface OnSearchForPatientsComplete {
-    public void onSearchForPatientsComplete(List<Patient> patients);
+    void onSearchForPatientsComplete(List<Patient> patients);
 }

@@ -2,10 +2,8 @@ package optum.com.smartprototype.token;
 
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -15,9 +13,7 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-
 import javax.net.ssl.HttpsURLConnection;
-
 import optum.com.smartprototype.config.SMARTConfig;
 
 /**

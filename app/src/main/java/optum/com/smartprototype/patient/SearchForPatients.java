@@ -7,7 +7,9 @@ import org.hl7.fhir.dstu3.model.Patient;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import optum.com.smartprototype.client.Client;
 
 /**
@@ -25,15 +27,20 @@ public class SearchForPatients extends AsyncTask<Void, Object, List<Patient>>{
     }
 
     protected List<Patient> doInBackground(Void... voids) {
-        Bundle response = mClient.getClient()
-                .search()
-                .forResource(Patient.class)
-                .where(Patient.FAMILY.isMissing(false))
-                .returnBundle(Bundle.class).execute();
+        try {
+            Bundle response = mClient.getClient()
+                    .search()
+                    .forResource(Patient.class)
+                    .where(Patient.FAMILY.isMissing(false))
+                    .returnBundle(Bundle.class).execute();
 
-        List<Patient> ret = new LinkedList<>();
-        for(Bundle.BundleEntryComponent component : response.getEntry())ret.add((Patient)component.getResource());
-        return ret;
+            List<Patient> ret = new LinkedList<>();
+            for (Bundle.BundleEntryComponent component : response.getEntry())
+                ret.add((Patient) component.getResource());
+            return ret;
+        }catch (Exception e){
+            return null;
+        }
     }
 
     protected void onPostExecute(List<Patient> patients) {

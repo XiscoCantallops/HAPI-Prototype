@@ -5,5 +5,5 @@ package optum.com.smartprototype.token;
  */
 
 public interface OnTokenComplete {
-    public void onTokenComplete(String token);
+    void onTokenComplete(String token);
 }

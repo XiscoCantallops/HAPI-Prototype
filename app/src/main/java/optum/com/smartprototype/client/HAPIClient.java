@@ -27,4 +27,12 @@ public class HAPIClient implements Client{
     public IGenericClient getClient(){
         return genericClient;
     }
+
+    public void doesClientHaveAValidToken(OnTokenCheck parent){
+        parent.onTokenCheck(true);
+    }
+
+    public void registerToken(String token){
+
+    }
 }

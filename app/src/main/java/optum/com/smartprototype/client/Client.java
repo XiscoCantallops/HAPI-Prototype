@@ -7,5 +7,7 @@ import ca.uhn.fhir.rest.client.IGenericClient;
  */
 
 public interface Client {
-    public IGenericClient getClient();
+    IGenericClient getClient();
+    void doesClientHaveAValidToken(OnTokenCheck parent);
+    void registerToken(String token);
 }
