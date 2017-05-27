@@ -1,27 +1,25 @@
-package clemson.edu.smartprototype.client;
+package optum.com.smartprototype.client;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.IGenericClient;
+import optum.com.smartprototype.config.HAPIConfig;
 
 
 /**
  * Created by gedison on 5/26/17.
  */
 
-public class HAPIClient {
+public class HAPIClient implements Client{
 
     private static HAPIClient hapiClientInstance = null;
     private IGenericClient genericClient;
 
     protected HAPIClient(){
         FhirContext ctx = FhirContext.forDstu3();
-        genericClient = ctx.newRestfulGenericClient(Config.DATA_URL);
-
-        //BearerTokenAuthInterceptor authInterceptor = new BearerTokenAuthInterceptor(token);
-        //genericClient.registerInterceptor(authInterceptor);
+        genericClient = ctx.newRestfulGenericClient(HAPIConfig.DATA_URL);
     }
 
-    public static HAPIClient getInstance(){
+    public static Client getInstance(){
         if(hapiClientInstance==null) hapiClientInstance = new HAPIClient();
         return hapiClientInstance;
     }
@@ -29,7 +27,4 @@ public class HAPIClient {
     public IGenericClient getClient(){
         return genericClient;
     }
-
-
-
 }

@@ -1,4 +1,4 @@
-package clemson.edu.smartprototype.patient;
+package optum.com.smartprototype.patient;
 
 import android.os.AsyncTask;
 
@@ -8,7 +8,7 @@ import org.hl7.fhir.dstu3.model.Patient;
 import java.util.LinkedList;
 import java.util.List;
 
-import clemson.edu.smartprototype.client.HAPIClient;
+import optum.com.smartprototype.client.Client;
 
 /**
  * Created by gedison on 5/26/17.
@@ -17,13 +17,15 @@ import clemson.edu.smartprototype.client.HAPIClient;
 public class SearchForPatients extends AsyncTask<Void, Object, List<Patient>>{
 
     private OnSearchForPatientsComplete parent;
+    private Client mClient;
 
-    public SearchForPatients(OnSearchForPatientsComplete parent){
+    public SearchForPatients(OnSearchForPatientsComplete parent, Client mClient){
         this.parent = parent;
+        this.mClient = mClient;
     }
 
     protected List<Patient> doInBackground(Void... voids) {
-        Bundle response = HAPIClient.getInstance().getClient()
+        Bundle response = mClient.getClient()
                 .search()
                 .forResource(Patient.class)
                 .where(Patient.FAMILY.isMissing(false))
@@ -35,6 +37,7 @@ public class SearchForPatients extends AsyncTask<Void, Object, List<Patient>>{
     }
 
     protected void onPostExecute(List<Patient> patients) {
+        mClient = null;
         parent.onSearchForPatientsComplete(patients);
     }
 }

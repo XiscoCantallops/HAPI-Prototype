@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SmartPrototype</string>
+    <string name="title_activity_token">TokenActivity</string>
 </resources>

@@ -1,38 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="clemson.edu.smartprototype"
+<manifest package="optum.edu.smartprototype"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCOUNT_MANAGER" />
-
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCOUNT_MANAGER"/>
 
     <application
-
-
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="optum.com.smartprototype.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
-
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+                <action android:name="android.intent.action.VIEW"/>
 
-                <data android:host="smartapp"
-                      android:scheme="http"
-                      android:path="/callback" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="smartapp"
+                    android:path="/callback"
+                    android:scheme="http"/>
             </intent-filter>
+
         </activity>
+
     </application>
 
 </manifest>

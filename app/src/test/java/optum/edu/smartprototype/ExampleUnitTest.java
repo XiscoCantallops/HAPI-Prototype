@@ -1,4 +1,4 @@
-package clemson.edu.smartprototype;
+package optum.edu.smartprototype;
 
 import org.junit.Test;
 

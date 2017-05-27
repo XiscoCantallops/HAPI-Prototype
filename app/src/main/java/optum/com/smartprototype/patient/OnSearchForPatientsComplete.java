@@ -1,4 +1,4 @@
-package clemson.edu.smartprototype.patient;
+package optum.com.smartprototype.patient;
 
 import org.hl7.fhir.dstu3.model.Patient;
 
