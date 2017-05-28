@@ -18,6 +18,12 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
+        </activity>
+        <activity
+            android:name="optum.com.smartprototype.TokenActivity"
+            android:label="@string/title_activity_token"
+            android:theme="@style/AppTheme.NoActionBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
@@ -25,13 +31,12 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
 
                 <data
+
                     android:host="smartapp"
                     android:path="/callback"
                     android:scheme="http"/>
             </intent-filter>
-
         </activity>
-
     </application>
 
 </manifest>

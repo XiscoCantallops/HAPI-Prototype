@@ -36,12 +36,12 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
+
+    compile "ca.uhn.hapi.fhir:hapi-fhir-android:2.5-SNAPSHOT:dstu3@jar"
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-
-    compile "ca.uhn.hapi.fhir:hapi-fhir-android:2.5-SNAPSHOT:dstu3@jar"
     compile 'commons-io:commons-io:2.4@jar'
     compile 'org.slf4j:slf4j-api:1.7.10@jar'
     compile 'javax.servlet:servlet-api:2.5'

@@ -5,18 +5,11 @@ package optum.com.smartprototype.client;
  */
 
 import android.os.AsyncTask;
-
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Patient;
-
-import java.util.LinkedList;
-import java.util.List;
-
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
-import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
-import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import optum.com.smartprototype.config.SMARTConfig;
 
 public class SMARTClient implements Client{
@@ -63,7 +56,6 @@ public class SMARTClient implements Client{
                 Bundle response = genericClient
                         .search()
                         .forResource(Patient.class)
-                        .where(Patient.FAMILY.isMissing(false))
                         .returnBundle(Bundle.class).execute();
                 return true;
             }catch(Exception e) {
