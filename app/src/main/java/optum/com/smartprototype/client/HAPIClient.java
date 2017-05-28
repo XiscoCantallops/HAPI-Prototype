@@ -2,7 +2,7 @@ package optum.com.smartprototype.client;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.IGenericClient;
-import optum.com.smartprototype.config.HAPIConfig;
+import optum.com.smartprototype.client.config.HAPIConfig;
 
 
 /**

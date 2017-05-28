@@ -1,5 +1,6 @@
 package optum.com.smartprototype.patient;
 
+import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Patient;
 
 import java.util.List;
@@ -9,5 +10,5 @@ import java.util.List;
  */
 
 public interface OnSearchForPatientsComplete {
-    void onSearchForPatientsComplete(List<Patient> patients);
+    void onSearchForPatientsComplete(List<Patient> patients, Bundle bundle);
 }

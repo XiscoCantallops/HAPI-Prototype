@@ -10,7 +10,7 @@ import org.hl7.fhir.dstu3.model.Patient;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
-import optum.com.smartprototype.config.SMARTConfig;
+import optum.com.smartprototype.client.config.SMARTConfig;
 
 public class SMARTClient implements Client{
 
@@ -67,8 +67,5 @@ public class SMARTClient implements Client{
             parent.onTokenCheck(isTokenValid);
         }
     }
-
-
-
 }
 

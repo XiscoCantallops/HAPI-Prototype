@@ -1,4 +1,4 @@
-package optum.com.smartprototype.token;
+package optum.com.smartprototype.client.token;
 
 /**
  * Created by gedison on 5/26/2017.

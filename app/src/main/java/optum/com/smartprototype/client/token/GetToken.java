@@ -1,4 +1,4 @@
-package optum.com.smartprototype.token;
+package optum.com.smartprototype.client.token;
 
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -10,11 +10,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
-import optum.com.smartprototype.config.SMARTConfig;
+import optum.com.smartprototype.client.config.SMARTConfig;
 
 /**
  * Created by gedison on 5/26/2017.
@@ -33,7 +34,7 @@ public class GetToken extends AsyncTask<String, Integer, String> {
         try {
             System.out.println("HTTP POST REQUEST");
             URL url = new URL(SMARTConfig.TOKEN_URL);
-            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(10000);
             conn.setConnectTimeout(15000);
             conn.setRequestMethod("POST");

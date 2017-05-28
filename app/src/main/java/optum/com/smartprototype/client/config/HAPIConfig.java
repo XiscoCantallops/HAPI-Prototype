@@ -1,4 +1,4 @@
-package optum.com.smartprototype.config;
+package optum.com.smartprototype.client.config;
 
 /**
  * Created by gedison on 5/26/2017.

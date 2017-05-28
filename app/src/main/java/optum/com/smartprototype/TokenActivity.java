@@ -6,15 +6,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Toast;
 import optum.com.smartprototype.client.Client;
 import optum.com.smartprototype.client.OnTokenCheck;
 import optum.com.smartprototype.client.SMARTClient;
-import optum.com.smartprototype.config.SMARTConfig;
-import optum.com.smartprototype.token.GetToken;
-import optum.com.smartprototype.token.OnTokenComplete;
-import optum.edu.smartprototype.R;
-import static optum.com.smartprototype.MainActivity.TOKEN_CODE;
+import optum.com.smartprototype.client.config.SMARTConfig;
+import optum.com.smartprototype.client.token.GetToken;
+import optum.com.smartprototype.client.token.OnTokenComplete;
 
 public class TokenActivity extends AppCompatActivity implements OnTokenComplete, OnTokenCheck {
 
@@ -22,6 +19,7 @@ public class TokenActivity extends AppCompatActivity implements OnTokenComplete,
     private boolean onFirstRun = true;
 
     protected void onCreate(Bundle savedInstanceState) {
+        System.out.println("Main Called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_token);
     }
@@ -32,6 +30,7 @@ public class TokenActivity extends AppCompatActivity implements OnTokenComplete,
         if(getIntent()!=null && getIntent().getAction()!=null && getIntent().getAction().equals(Intent.ACTION_VIEW)) {
             setContentView(R.layout.activity_authorization);
 
+            System.out.println("ON Resume Inner IF");
             Uri uri = getIntent().getData();
             if(uri.getQueryParameter("error") != null) onTokenComplete(null);
             else {
@@ -67,6 +66,8 @@ public class TokenActivity extends AppCompatActivity implements OnTokenComplete,
     }
 
     public void onTokenComplete(String token) {
+
+        System.out.println("TOKEN: "+token);
         if(token!=null)mClient.registerToken(token);
         finish();
         return;

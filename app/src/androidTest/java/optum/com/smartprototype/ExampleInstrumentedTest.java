@@ -1,4 +1,4 @@
-package optum.edu.smartprototype;
+package optum.com.smartprototype;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
