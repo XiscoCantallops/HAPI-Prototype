@@ -10,23 +10,21 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.hl7.fhir.instance.model.api.IBaseBundle;
-
 import java.util.ArrayList;
-import java.util.List;
 import optum.com.smartprototype.client.Client;
 import optum.com.smartprototype.client.HAPIClient;
 import optum.com.smartprototype.client.OnTokenCheck;
 import optum.com.smartprototype.client.SMARTClient;
-import optum.com.smartprototype.patient.OnSearchForPatientsComplete;
-import optum.com.smartprototype.patient.SearchForPatients;
-import optum.com.smartprototype.patient.SearchForPatientsPaging;
+import optum.com.smartprototype.search.OnSearchComplete;
+import optum.com.smartprototype.search.SearchPaging;
+import optum.com.smartprototype.search.SearchForPatients;
 import optum.com.smartprototype.scroll.EndOfPageScrollListener;
 import optum.com.smartprototype.scroll.OnScrollToEndOfPage;
 
-public class ListActivity extends AppCompatActivity  implements OnSearchForPatientsComplete, OnTokenCheck, OnScrollToEndOfPage {
+public class ListActivity extends AppCompatActivity  implements OnSearchComplete, OnTokenCheck, OnScrollToEndOfPage {
 
     public static final int TOKEN_CODE = 12;
+    public static final String PATIENT = "patient";
 
     private ListView mListView;
     ArrayAdapter<String> patientAdapter = null;
@@ -44,11 +42,15 @@ public class ListActivity extends AppCompatActivity  implements OnSearchForPatie
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mListView = (ListView) findViewById(R.id.mListView);
         mListView.setOnScrollListener(new EndOfPageScrollListener(this));
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                System.out.println("ID: "+i+" "+l);
+            Intent patientActivity = new Intent(getApplicationContext(), PatientActivity.class);
+            patientActivity.putExtra(PATIENT, allPatients.get(i));
+            startActivity(patientActivity);
             }
         });
 
@@ -64,7 +66,6 @@ public class ListActivity extends AppCompatActivity  implements OnSearchForPatie
                 break;
         } mClient.doesClientHaveAValidToken(this);
     }
-
 
     public void onTokenCheck(boolean isTokenValid) {
         if(isTokenValid){
@@ -87,30 +88,8 @@ public class ListActivity extends AppCompatActivity  implements OnSearchForPatie
 
     private void pageForPatients(){
         if(mBundle!=null) {
-            SearchForPatientsPaging patientAsyncTask = new SearchForPatientsPaging(this, mClient, mBundle);
+            SearchPaging patientAsyncTask = new SearchPaging(this, mClient, mBundle);
             patientAsyncTask.execute();
-        }
-    }
-
-    public void onSearchForPatientsComplete(List<Patient> patients, org.hl7.fhir.dstu3.model.Bundle mBundle) {
-        canLoadMorePatients = true;
-
-        if(patients!=null) {
-            this.mBundle = mBundle;
-
-            int startIndex =  allPatients.size();
-            allPatients.addAll(patients);
-
-            for (int i = startIndex; i < allPatients.size(); i++) patientStringArrayList.add("Patient " + i + ": " + ((allPatients.get(i).getName().size() > 0) ? allPatients.get(i).getName().get(0).getFamily() + ", " + allPatients.get(i).getName().get(0).getGivenAsSingleString() : "Name not found"));
-
-            if(patientAdapter == null){
-                patientAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, patientStringArrayList);
-                mListView.setAdapter(patientAdapter);
-            }else patientAdapter.notifyDataSetChanged();
-
-        }else{
-            Toast.makeText(this, "Patients could not be queried", Toast.LENGTH_SHORT).show();
-            canLoadMorePatients = false;
         }
     }
 
@@ -118,6 +97,28 @@ public class ListActivity extends AppCompatActivity  implements OnSearchForPatie
         if(canLoadMorePatients){
             canLoadMorePatients = false;
             pageForPatients();
+        }
+    }
+
+    public void onSearchComplete(org.hl7.fhir.dstu3.model.Bundle bundle) {
+
+        if(bundle!=null){
+            mBundle = bundle;
+            canLoadMorePatients = true;
+            for (org.hl7.fhir.dstu3.model.Bundle.BundleEntryComponent component : bundle.getEntry()){
+                Patient temp = (Patient) component.getResource();
+                allPatients.add(temp);
+                patientStringArrayList.add("Patient " + allPatients.size() + ": " + ((temp.getName().size() > 0) ? temp.getName().get(0).getFamily() + ", " + temp.getName().get(0).getGivenAsSingleString() : "Name not found"));
+            }
+
+            if(patientAdapter == null){
+                patientAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, patientStringArrayList);
+                mListView.setAdapter(patientAdapter);
+            }else patientAdapter.notifyDataSetChanged();
+
+        }else{
+            Toast.makeText(this, "No more patients found", Toast.LENGTH_SHORT).show();
+            canLoadMorePatients = false;
         }
     }
 }

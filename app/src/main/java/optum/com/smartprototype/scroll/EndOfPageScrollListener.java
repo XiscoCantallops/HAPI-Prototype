@@ -11,7 +11,6 @@ import optum.com.smartprototype.R;
  */
 
 public class EndOfPageScrollListener implements AbsListView.OnScrollListener {
-    private int preLast;
     private OnScrollToEndOfPage parent;
 
     public EndOfPageScrollListener(OnScrollToEndOfPage parent){
@@ -22,10 +21,6 @@ public class EndOfPageScrollListener implements AbsListView.OnScrollListener {
 
     public void onScroll(AbsListView lw, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
         final int lastItem = firstVisibleItem + visibleItemCount;
-        if(lastItem == totalItemCount){
-            parent.onScrollToEndOfPage();
-            if(preLast!=lastItem)preLast = lastItem;
-        }
+        if(lastItem == totalItemCount) parent.onScrollToEndOfPage();
     }
-
 }

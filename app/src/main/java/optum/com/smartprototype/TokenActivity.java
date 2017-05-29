@@ -17,11 +17,15 @@ public class TokenActivity extends AppCompatActivity implements OnTokenComplete,
 
     private Client mClient = SMARTClient.getInstance();
     private boolean onFirstRun = true;
+    private boolean getTokenAutomatically = true;
 
     protected void onCreate(Bundle savedInstanceState) {
-        System.out.println("Main Called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_token);
+
+        if(getTokenAutomatically){
+            findViewById(R.id.tokenButton).setVisibility(View.INVISIBLE);
+        }
     }
 
     protected void onResume() {
@@ -30,7 +34,6 @@ public class TokenActivity extends AppCompatActivity implements OnTokenComplete,
         if(getIntent()!=null && getIntent().getAction()!=null && getIntent().getAction().equals(Intent.ACTION_VIEW)) {
             setContentView(R.layout.activity_authorization);
 
-            System.out.println("ON Resume Inner IF");
             Uri uri = getIntent().getData();
             if(uri.getQueryParameter("error") != null) onTokenComplete(null);
             else {
@@ -45,12 +48,11 @@ public class TokenActivity extends AppCompatActivity implements OnTokenComplete,
             mClient.doesClientHaveAValidToken(this);
         }else{
             onFirstRun = false;
-            getToken(null);
+            if(getTokenAutomatically)getToken(null);
         }
     }
 
     public void getToken(View v){
-        System.out.println("TOKEN FAILED");
         String uri = Uri.parse(SMARTConfig.AUTHORIZE_URL)
                 .buildUpon()
                 .appendQueryParameter("state",          SMARTConfig.STATE)
@@ -66,8 +68,6 @@ public class TokenActivity extends AppCompatActivity implements OnTokenComplete,
     }
 
     public void onTokenComplete(String token) {
-
-        System.out.println("TOKEN: "+token);
         if(token!=null)mClient.registerToken(token);
         finish();
         return;

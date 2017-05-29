@@ -7,7 +7,7 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity{
 
-    public static final String SERVER_TYPE = "sever-type";
+    public static final String SERVER_TYPE = "server-type";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
