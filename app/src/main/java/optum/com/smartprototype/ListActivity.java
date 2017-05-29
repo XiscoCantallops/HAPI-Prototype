@@ -1,6 +1,8 @@
 package optum.com.smartprototype;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -54,7 +56,8 @@ public class ListActivity extends AppCompatActivity  implements OnSearchComplete
             }
         });
 
-        switch (getIntent().getIntExtra(MainActivity.SERVER_TYPE, -1)){
+        SharedPreferences prefs = this.getSharedPreferences("com.optum.smartprototype", Context.MODE_PRIVATE);
+        switch (prefs.getInt(MainActivity.SERVER_TYPE, -1)){
             case 1:
                 mClient = HAPIClient.getInstance();
                 break;
