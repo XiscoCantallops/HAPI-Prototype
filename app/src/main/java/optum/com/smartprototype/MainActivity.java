@@ -16,22 +16,21 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
     }
 
-    private void startPatientListActivity(int serverType){
+    private void startPatientListActivity(){
         Intent listActivityIntent = new Intent(this, ListActivity.class);
-        listActivityIntent.putExtra(SERVER_TYPE, serverType);
         startActivity(listActivityIntent);
     }
 
     public void useHAPIServer(View v){
-        SharedPreferences prefs = this.getSharedPreferences("com.optum.smartprototype", Context.MODE_PRIVATE);
+        SharedPreferences prefs = this.getSharedPreferences("optum.com.smartprototype", Context.MODE_PRIVATE);
         prefs.edit().putInt(SERVER_TYPE, 1).apply();
-        startPatientListActivity(1);
+        startPatientListActivity();
     }
 
     public void useSMARTServer(View v){
-        SharedPreferences prefs = this.getSharedPreferences("com.optum.smartprototype", Context.MODE_PRIVATE);
+        SharedPreferences prefs = this.getSharedPreferences("optum.com.smartprototype", Context.MODE_PRIVATE);
         prefs.edit().putInt(SERVER_TYPE, 2).apply();
-        startPatientListActivity(2);
+        startPatientListActivity();
     }
 
 }

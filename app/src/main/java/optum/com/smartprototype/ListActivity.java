@@ -13,17 +13,19 @@ import android.widget.ListView;
 import android.widget.Toast;
 import org.hl7.fhir.dstu3.model.Patient;
 import java.util.ArrayList;
+
+import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 import optum.com.smartprototype.client.Client;
 import optum.com.smartprototype.client.HAPIClient;
-import optum.com.smartprototype.client.OnTokenCheck;
 import optum.com.smartprototype.client.SMARTClient;
+import optum.com.smartprototype.search.GenericSearch;
 import optum.com.smartprototype.search.OnSearchComplete;
-import optum.com.smartprototype.search.SearchPaging;
-import optum.com.smartprototype.search.SearchForPatients;
+import optum.com.smartprototype.search.Paging;
+import optum.com.smartprototype.search.searches.PatientSearch;
 import optum.com.smartprototype.scroll.EndOfPageScrollListener;
 import optum.com.smartprototype.scroll.OnScrollToEndOfPage;
 
-public class ListActivity extends AppCompatActivity  implements OnSearchComplete, OnTokenCheck, OnScrollToEndOfPage {
+public class ListActivity extends AppCompatActivity  implements OnSearchComplete, OnScrollToEndOfPage {
 
     public static final int TOKEN_CODE = 12;
     public static final String PATIENT = "patient";
@@ -56,7 +58,7 @@ public class ListActivity extends AppCompatActivity  implements OnSearchComplete
             }
         });
 
-        SharedPreferences prefs = this.getSharedPreferences("com.optum.smartprototype", Context.MODE_PRIVATE);
+        SharedPreferences prefs = this.getSharedPreferences("optum.com.smartprototype", Context.MODE_PRIVATE);
         switch (prefs.getInt(MainActivity.SERVER_TYPE, -1)){
             case 1:
                 mClient = HAPIClient.getInstance();
@@ -67,31 +69,32 @@ public class ListActivity extends AppCompatActivity  implements OnSearchComplete
             default:
                 mClient = HAPIClient.getInstance();
                 break;
-        } mClient.doesClientHaveAValidToken(this);
+        }
+
+        loadPatients();
     }
 
-    public void onTokenCheck(boolean isTokenValid) {
-        if(isTokenValid){
-            SearchForPatients patientAsyncTask = new SearchForPatients(this, mClient);
-            patientAsyncTask.execute();
-        }else{
-            Intent tokenActivity = new Intent(this, TokenActivity.class);
-            startActivityForResult(tokenActivity, TOKEN_CODE);
-        }
+    public void loadPatients(){
+        GenericSearch patientSearch = new PatientSearch(this, mClient);
+        patientSearch.execute();
+    }
+
+    public void loadToken(){
+        Intent tokenActivity = new Intent(this, TokenActivity.class);
+        startActivityForResult(tokenActivity, TOKEN_CODE);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == TOKEN_CODE) {
             if (resultCode == RESULT_OK) {
-                SearchForPatients patientAsyncTask = new SearchForPatients(this, mClient);
-                patientAsyncTask.execute();
+                loadPatients();
             }else Toast.makeText(this, "Error Happened Man!", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void pageForPatients(){
         if(mBundle!=null) {
-            SearchPaging patientAsyncTask = new SearchPaging(this, mClient, mBundle);
+            GenericSearch patientAsyncTask = new Paging(this, mClient, mBundle);
             patientAsyncTask.execute();
         }
     }
@@ -122,6 +125,14 @@ public class ListActivity extends AppCompatActivity  implements OnSearchComplete
         }else{
             Toast.makeText(this, "No more patients found", Toast.LENGTH_SHORT).show();
             canLoadMorePatients = false;
+        }
+    }
+
+    public void onSearchError(Exception e) {
+        if(e instanceof AuthenticationException){
+            loadToken();
+        }else{
+            System.out.println("Other Error: "+e.getLocalizedMessage()+" "+e.getClass().toString());
         }
     }
 }

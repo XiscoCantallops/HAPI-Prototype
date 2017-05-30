@@ -1,26 +1,35 @@
 package optum.com.smartprototype;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import org.hl7.fhir.dstu3.model.MedicationRequest;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.exceptions.FHIRException;
 import java.util.ArrayList;
 
+import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 import optum.com.smartprototype.client.Client;
 import optum.com.smartprototype.client.HAPIClient;
 import optum.com.smartprototype.client.SMARTClient;
+import optum.com.smartprototype.search.GenericSearch;
+import optum.com.smartprototype.search.searches.MedicationRequestWithSubjectSearch;
 import optum.com.smartprototype.search.OnSearchComplete;
-import optum.com.smartprototype.search.SearchForMedicationRequestsWithSubject;
+
+import static optum.com.smartprototype.ListActivity.TOKEN_CODE;
 
 public class PatientActivity extends AppCompatActivity implements OnSearchComplete{
 
     private ListView mListView;
+    private Patient mPatient;
+    private Client mClient;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,15 +37,15 @@ public class PatientActivity extends AppCompatActivity implements OnSearchComple
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Patient mPatient = (Patient)getIntent().getSerializableExtra(ListActivity.PATIENT);
+        mPatient = (Patient)getIntent().getSerializableExtra(ListActivity.PATIENT);
 
         getSupportActionBar().setTitle(mPatient.getName().get(0).getFamily() + ", " + mPatient.getName().get(0).getGivenAsSingleString());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mListView = (ListView) findViewById(R.id.mListView);
 
-        Client mClient;
-        SharedPreferences prefs = this.getSharedPreferences("com.optum.smartprototype", Context.MODE_PRIVATE);
+
+        SharedPreferences prefs = this.getSharedPreferences("optum.com.smartprototype", Context.MODE_PRIVATE);
         switch (prefs.getInt(MainActivity.SERVER_TYPE, -1)){
             case 1:
                 mClient = HAPIClient.getInstance();
@@ -49,8 +58,25 @@ public class PatientActivity extends AppCompatActivity implements OnSearchComple
                 break;
         }
 
-        SearchForMedicationRequestsWithSubject medicationAsyncTask = new SearchForMedicationRequestsWithSubject(mPatient.getIdElement().getIdPart(), this, mClient);
+        loadMedications();
+    }
+
+    public void loadMedications(){
+        GenericSearch medicationAsyncTask = new MedicationRequestWithSubjectSearch(this, mClient, mPatient.getIdElement().getIdPart());
         medicationAsyncTask.execute();
+    }
+
+    public void loadToken(){
+        Intent tokenActivity = new Intent(this, TokenActivity.class);
+        startActivityForResult(tokenActivity, TOKEN_CODE);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == TOKEN_CODE) {
+            if (resultCode == RESULT_OK) {
+                loadMedications();
+            }else Toast.makeText(this, "Error Happened Man!", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -70,6 +96,14 @@ public class PatientActivity extends AppCompatActivity implements OnSearchComple
 
             ArrayAdapter<String> listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, observationStringArrayList);
             mListView.setAdapter(listAdapter);
+        }
+    }
+
+    public void onSearchError(Exception e) {
+        if(e instanceof AuthenticationException){
+            loadToken();
+        }else{
+            System.out.println("Other Error: "+e.getLocalizedMessage()+" "+e.getClass().toString());
         }
     }
 }

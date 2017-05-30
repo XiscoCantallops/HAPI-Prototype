@@ -8,4 +8,5 @@ import org.hl7.fhir.dstu3.model.Bundle;
 
 public interface OnSearchComplete {
     void onSearchComplete(Bundle bundle);
+    void onSearchError(Exception e);
 }

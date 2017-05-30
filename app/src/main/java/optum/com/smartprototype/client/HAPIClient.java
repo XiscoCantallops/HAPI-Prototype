@@ -9,13 +9,12 @@ import optum.com.smartprototype.client.config.HAPIConfig;
  * Created by gedison on 5/26/17.
  */
 
-public class HAPIClient implements Client{
+public class HAPIClient extends Client{
 
     private static HAPIClient hapiClientInstance = null;
     private IGenericClient genericClient;
 
-    protected HAPIClient(){
-        FhirContext ctx = FhirContext.forDstu3();
+    private HAPIClient(){
         genericClient = ctx.newRestfulGenericClient(HAPIConfig.DATA_URL);
     }
 
@@ -32,7 +31,5 @@ public class HAPIClient implements Client{
         parent.onTokenCheck(true);
     }
 
-    public void registerToken(String token){
-
-    }
+    public void registerToken(String token){}
 }

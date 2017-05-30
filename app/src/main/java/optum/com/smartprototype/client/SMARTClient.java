@@ -10,15 +10,16 @@ import org.hl7.fhir.dstu3.model.Patient;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
+import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
+import ca.uhn.fhir.rest.server.exceptions.ForbiddenOperationException;
 import optum.com.smartprototype.client.config.SMARTConfig;
 
-public class SMARTClient implements Client{
+public class SMARTClient extends Client{
 
     private static SMARTClient smartClientInstance = null;
     private static IGenericClient genericClient;
 
-    protected SMARTClient(){
-        FhirContext ctx = FhirContext.forDstu3();
+    private SMARTClient(){
         genericClient = ctx.newRestfulGenericClient(SMARTConfig.DATA_URL);
     }
 
@@ -58,8 +59,10 @@ public class SMARTClient implements Client{
                         .forResource(Patient.class)
                         .returnBundle(Bundle.class).execute();
                 return true;
-            }catch(Exception e) {
+            }catch(AuthenticationException e) {
                 return false;
+            }catch (Exception e){
+                return true;
             }
         }
 
