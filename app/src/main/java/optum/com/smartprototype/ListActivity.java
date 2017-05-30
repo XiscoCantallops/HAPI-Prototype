@@ -100,17 +100,17 @@ public class ListActivity extends AppCompatActivity  implements OnSearchComplete
     }
 
     public void onScrollToEndOfPage() {
-        if(canLoadMorePatients){
-            canLoadMorePatients = false;
+        //if(canLoadMorePatients){
+            //canLoadMorePatients = false;
             pageForPatients();
-        }
+        //}
     }
 
     public void onSearchComplete(org.hl7.fhir.dstu3.model.Bundle bundle) {
 
         if(bundle!=null){
             mBundle = bundle;
-            canLoadMorePatients = true;
+            //canLoadMorePatients = true;
             for (org.hl7.fhir.dstu3.model.Bundle.BundleEntryComponent component : bundle.getEntry()){
                 Patient temp = (Patient) component.getResource();
                 allPatients.add(temp);
@@ -124,7 +124,7 @@ public class ListActivity extends AppCompatActivity  implements OnSearchComplete
 
         }else{
             Toast.makeText(this, "No more patients found", Toast.LENGTH_SHORT).show();
-            canLoadMorePatients = false;
+            //canLoadMorePatients = false;
         }
     }
 
