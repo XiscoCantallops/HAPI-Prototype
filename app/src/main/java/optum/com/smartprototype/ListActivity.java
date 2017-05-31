@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -39,6 +40,12 @@ public class ListActivity extends AppCompatActivity  implements OnSearchComplete
     private ArrayList<String> patientStringArrayList = new ArrayList<>();
     private ArrayList<Patient> allPatients = new ArrayList<>();
     private org.hl7.fhir.dstu3.model.Bundle mBundle;
+
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
